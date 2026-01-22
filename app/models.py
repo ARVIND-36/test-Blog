@@ -10,12 +10,28 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
+    password = db.Column(db.String(200), nullable=True)  # Nullable for OAuth users
+    email_verified = db.Column(db.Boolean, default=False)
+    oauth_provider = db.Column(db.String(50), nullable=True)  # 'github', 'google', or None
+    oauth_id = db.Column(db.String(200), nullable=True)
+    avatar_url = db.Column(db.String(500), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     blogs = db.relationship('Blog', backref='author', lazy=True)
     questions = db.relationship('Question', backref='author', lazy=True)
     comments = db.relationship('Comment', backref='author', lazy=True)
+
+
+# --------------------
+# OTP Verification
+# --------------------
+class OTPVerification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), nullable=False)
+    otp = db.Column(db.String(6), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    verified = db.Column(db.Boolean, default=False)
 
 
 # --------------------
