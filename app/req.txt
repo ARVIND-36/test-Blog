@@ -2,5 +2,10 @@ flask
 flask-sqlalchemy 
 flask-migrate
 flask-login 
+flask-cors
+flask-mail
 python-dotenv
 psycopg2-binary
+werkzeug
+authlib
+requests

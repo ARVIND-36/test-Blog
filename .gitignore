@@ -1,2 +1,34 @@
-.venv
-/app/__pycache__/
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+cookies.txt
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
