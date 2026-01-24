@@ -1,6 +1,32 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Home() {
+  const { isLoggedIn, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !isLoggedIn) {
+      router.push('/login');
+    }
+  }, [isLoggedIn, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
+
+  if (!isLoggedIn) {
+    return null;
+  }
+
   return (
     <div className="space-y-16">
       {/* Hero Section */}
@@ -8,14 +34,13 @@ export default function Home() {
         <h1 className="text-5xl font-bold mb-6">Welcome to StudentHub 🎓</h1>
         <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
           A platform for students to share knowledge, ask questions, and learn together.
-          Join our community today!
         </p>
         <div className="flex justify-center gap-4">
           <Link
-            href="/signup"
+            href="/blogs"
             className="px-8 py-3 bg-white text-indigo-600 rounded-lg font-semibold hover:bg-indigo-100 transition shadow-lg"
           >
-            Get Started
+            View Blogs
           </Link>
           <Link
             href="/questions"
@@ -27,7 +52,7 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section className="grid md:grid-cols-3 gap-8">
+      <section className="grid md:grid-cols-2 gap-8">
         <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
           <div className="text-4xl mb-4">📝</div>
           <h3 className="text-xl font-bold text-gray-800 mb-2">Share Blogs</h3>
@@ -47,17 +72,6 @@ export default function Home() {
           </p>
           <Link href="/questions" className="text-indigo-600 font-medium mt-4 inline-block hover:underline">
             Ask a Question →
-          </Link>
-        </div>
-
-        <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
-          <div className="text-4xl mb-4">🏷️</div>
-          <h3 className="text-xl font-bold text-gray-800 mb-2">Browse by Tags</h3>
-          <p className="text-gray-600">
-            Find content by topic. Filter questions by tags like Python, DevOps, AI, and more.
-          </p>
-          <Link href="/tags" className="text-indigo-600 font-medium mt-4 inline-block hover:underline">
-            Browse Tags →
           </Link>
         </div>
       </section>

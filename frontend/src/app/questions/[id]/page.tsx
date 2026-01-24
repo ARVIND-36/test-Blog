@@ -14,6 +14,7 @@ import {
 } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 interface Question {
   id: number;
@@ -34,7 +35,7 @@ interface Tag {
   name: string;
 }
 
-export default function QuestionDetailPage() {
+function QuestionDetailContent() {
   const params = useParams();
   const router = useRouter();
   const [question, setQuestion] = useState<Question | null>(null);
@@ -323,5 +324,13 @@ export default function QuestionDetailPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function QuestionDetailPage() {
+  return (
+    <ProtectedRoute>
+      <QuestionDetailContent />
+    </ProtectedRoute>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getQuestions, getQuestionVotes } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 interface Question {
   id: number;
@@ -13,7 +14,7 @@ interface Question {
   votes?: number;
 }
 
-export default function QuestionsPage() {
+function QuestionsContent() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const { isLoggedIn } = useAuth();
@@ -105,5 +106,13 @@ export default function QuestionsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function QuestionsPage() {
+  return (
+    <ProtectedRoute>
+      <QuestionsContent />
+    </ProtectedRoute>
   );
 }

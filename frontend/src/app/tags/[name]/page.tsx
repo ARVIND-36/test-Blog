@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { getQuestionsByTag } from '@/lib/api';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 interface Question {
   id: number;
@@ -11,7 +12,7 @@ interface Question {
   author: string;
 }
 
-export default function TagQuestionsPage() {
+function TagQuestionsContent() {
   const params = useParams();
   const tagName = params.name as string;
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -73,5 +74,13 @@ export default function TagQuestionsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function TagQuestionsPage() {
+  return (
+    <ProtectedRoute>
+      <TagQuestionsContent />
+    </ProtectedRoute>
   );
 }

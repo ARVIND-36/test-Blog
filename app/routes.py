@@ -44,14 +44,39 @@ def register_routes(app):
     @login_required
     def create_blog():
         data = request.json
+        tags_list = data.get("tags", [])
+        
+        # Limit to 5 tags
+        if len(tags_list) > 5:
+            return jsonify({"message": "Maximum 5 tags allowed"}), 400
+        
         blog = Blog(
             title=data["title"],
             content=data["content"],
             user_id=current_user.id
         )
         db.session.add(blog)
+        
+        # Add default "blog" tag
+        blog_tag = Tag.query.filter_by(name="blog").first()
+        if not blog_tag:
+            blog_tag = Tag(name="blog")
+            db.session.add(blog_tag)
+        blog.tags.append(blog_tag)
+        
+        # Add user-specified tags
+        for tag_name in tags_list:
+            tag_name = tag_name.lower().strip().lstrip('#')
+            if tag_name and tag_name != "blog":
+                tag = Tag.query.filter_by(name=tag_name).first()
+                if not tag:
+                    tag = Tag(name=tag_name)
+                    db.session.add(tag)
+                if tag not in blog.tags:
+                    blog.tags.append(tag)
+        
         db.session.commit()
-        return jsonify({"message": "Blog created"})
+        return jsonify({"message": "Blog created", "id": blog.id})
 
     @app.route("/blogs", methods=["GET"])
     def get_blogs():
@@ -61,7 +86,8 @@ def register_routes(app):
                 "id": b.id,
                 "title": b.title,
                 "content": b.content,
-                "author": b.author.username
+                "author": b.author.username,
+                "tags": [{"id": t.id, "name": t.name} for t in b.tags]
             } for b in blogs
         ])
 
@@ -72,8 +98,14 @@ def register_routes(app):
             "id": blog.id,
             "title": blog.title,
             "content": blog.content,
-            "author": blog.author.username
+            "author": blog.author.username,
+            "tags": [{"id": t.id, "name": t.name} for t in blog.tags]
         })
+
+    @app.route("/blogs/<int:id>/tags", methods=["GET"])
+    def get_blog_tags(id):
+        blog = Blog.query.get_or_404(id)
+        return jsonify([{"id": t.id, "name": t.name} for t in blog.tags])
 
     @app.route("/blogs/<int:id>", methods=["PUT"])
     @login_required
@@ -103,14 +135,39 @@ def register_routes(app):
     @login_required
     def create_question():
         data = request.json
+        tags_list = data.get("tags", [])
+        
+        # Limit to 5 tags
+        if len(tags_list) > 5:
+            return jsonify({"message": "Maximum 5 tags allowed"}), 400
+        
         q = Question(
             title=data["title"],
             description=data["description"],
             user_id=current_user.id
         )
         db.session.add(q)
+        
+        # Add default "question" tag
+        question_tag = Tag.query.filter_by(name="question").first()
+        if not question_tag:
+            question_tag = Tag(name="question")
+            db.session.add(question_tag)
+        q.tags.append(question_tag)
+        
+        # Add user-specified tags
+        for tag_name in tags_list:
+            tag_name = tag_name.lower().strip().lstrip('#')
+            if tag_name and tag_name != "question":
+                tag = Tag.query.filter_by(name=tag_name).first()
+                if not tag:
+                    tag = Tag(name=tag_name)
+                    db.session.add(tag)
+                if tag not in q.tags:
+                    q.tags.append(tag)
+        
         db.session.commit()
-        return jsonify({"message": "Question posted"})
+        return jsonify({"message": "Question posted", "id": q.id})
 
     @app.route("/questions", methods=["GET"])
     def get_questions():
@@ -313,6 +370,17 @@ def register_routes(app):
     @app.route("/tags", methods=["GET"])
     def get_tags():
         tags = Tag.query.all()
+        return jsonify([{"id": t.id, "name": t.name} for t in tags])
+
+    @app.route("/tags/suggest", methods=["GET"])
+    def suggest_tags():
+        """Suggest tags based on prefix"""
+        prefix = request.args.get("q", "").lower().strip().lstrip('#')
+        if not prefix:
+            # Return popular tags if no prefix
+            tags = Tag.query.limit(10).all()
+        else:
+            tags = Tag.query.filter(Tag.name.ilike(f"{prefix}%")).limit(10).all()
         return jsonify([{"id": t.id, "name": t.name} for t in tags])
 
     @app.route("/tags", methods=["POST"])

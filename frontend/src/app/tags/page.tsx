@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getTags } from '@/lib/api';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 interface Tag {
   id: number;
   name: string;
 }
 
-export default function TagsPage() {
+function TagsContent() {
   const [tags, setTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -59,5 +60,13 @@ export default function TagsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function TagsPage() {
+  return (
+    <ProtectedRoute>
+      <TagsContent />
+    </ProtectedRoute>
   );
 }

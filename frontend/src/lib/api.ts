@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -34,17 +34,18 @@ export const getGoogleAuthUrl = () => `${API_BASE_URL}/auth/google`;
 // Blogs
 export const getBlogs = () => api.get('/blogs');
 export const getBlog = (id: number) => api.get(`/blogs/${id}`);
-export const createBlog = (title: string, content: string) =>
-  api.post('/blogs', { title, content });
+export const createBlog = (title: string, content: string, tags: string[] = []) =>
+  api.post('/blogs', { title, content, tags });
 export const updateBlog = (id: number, title: string, content: string) =>
   api.put(`/blogs/${id}`, { title, content });
 export const deleteBlog = (id: number) => api.delete(`/blogs/${id}`);
+export const getBlogTags = (id: number) => api.get(`/blogs/${id}/tags`);
 
 // Questions
 export const getQuestions = () => api.get('/questions');
 export const getQuestion = (id: number) => api.get(`/questions/${id}`);
-export const createQuestion = (title: string, description: string) =>
-  api.post('/questions', { title, description });
+export const createQuestion = (title: string, description: string, tags: string[] = []) =>
+  api.post('/questions', { title, description, tags });
 export const updateQuestion = (id: number, title: string, description: string) =>
   api.put(`/questions/${id}`, { title, description });
 export const deleteQuestion = (id: number) => api.delete(`/questions/${id}`);
@@ -68,6 +69,7 @@ export const getCommentVotes = (id: number) => api.get(`/comments/${id}/votes`);
 
 // Tags
 export const getTags = () => api.get('/tags');
+export const suggestTags = (query: string) => api.get(`/tags/suggest?q=${encodeURIComponent(query)}`);
 export const addTagToQuestion = (questionId: number, tag: string) =>
   api.post(`/questions/${questionId}/tags`, { tag });
 export const getQuestionTags = (questionId: number) =>

@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { getBlog, deleteBlog } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 interface Blog {
   id: number;
@@ -13,7 +14,7 @@ interface Blog {
   author: string;
 }
 
-export default function BlogDetailPage() {
+function BlogDetailContent() {
   const params = useParams();
   const router = useRouter();
   const [blog, setBlog] = useState<Blog | null>(null);
@@ -108,5 +109,13 @@ export default function BlogDetailPage() {
         </div>
       </article>
     </div>
+  );
+}
+
+export default function BlogDetailPage() {
+  return (
+    <ProtectedRoute>
+      <BlogDetailContent />
+    </ProtectedRoute>
   );
 }

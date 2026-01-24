@@ -32,3 +32,30 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Alembic migration versions (auto-generated DB schema history)
+migrations/versions/
+
+# Docker
+*.pid
+*.sock
+Dockerfile.frontend
+
+# Node/Next.js
+frontend/.next/
+frontend/node_modules/
+frontend/.env
+
+# Misc
+*.sqlite3
+*.db
+*.pkl
+*.bak
+*.tmp
+
+# Private/Secrets
+.env
+.env.*
+
+# Jupyter
+*.ipynb_checkpoints/

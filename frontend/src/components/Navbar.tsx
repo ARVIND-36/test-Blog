@@ -47,9 +47,6 @@ export default function Navbar() {
             <Link href="/questions" className="text-white hover:text-indigo-200 transition">
               Questions
             </Link>
-            <Link href="/tags" className="text-white hover:text-indigo-200 transition">
-              Tags
-            </Link>
           </div>
 
           {/* Search */}

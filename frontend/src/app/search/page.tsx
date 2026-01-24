@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { search } from '@/lib/api';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 interface SearchResult {
   questions: { id: number; title: string; author: string }[];
@@ -117,12 +118,14 @@ function SearchResults() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-      </div>
-    }>
-      <SearchResults />
-    </Suspense>
+    <ProtectedRoute>
+      <Suspense fallback={
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        </div>
+      }>
+        <SearchResults />
+      </Suspense>
+    </ProtectedRoute>
   );
 }

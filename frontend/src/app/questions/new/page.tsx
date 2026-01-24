@@ -3,23 +3,16 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createQuestion } from '@/lib/api';
-import { useAuth } from '@/context/AuthContext';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import TagInput from '@/components/TagInput';
 
-export default function NewQuestionPage() {
+function NewQuestionContent() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { isLoggedIn } = useAuth();
-
-  if (!isLoggedIn) {
-    return (
-      <div className="text-center py-16">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Please login to ask a question</h1>
-      </div>
-    );
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +20,7 @@ export default function NewQuestionPage() {
     setLoading(true);
 
     try {
-      await createQuestion(title, description);
+      await createQuestion(title, description, tags);
       router.push('/questions');
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
@@ -76,6 +69,18 @@ export default function NewQuestionPage() {
           />
         </div>
 
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Tags <span className="text-gray-400">(#question is added automatically)</span>
+          </label>
+          <TagInput
+            tags={tags}
+            setTags={setTags}
+            maxTags={5}
+            placeholder="Type to search tags or add new ones..."
+          />
+        </div>
+
         <div className="flex gap-4">
           <button
             type="submit"
@@ -94,5 +99,13 @@ export default function NewQuestionPage() {
         </div>
       </form>
     </div>
+  );
+}
+
+export default function NewQuestionPage() {
+  return (
+    <ProtectedRoute>
+      <NewQuestionContent />
+    </ProtectedRoute>
   );
 }

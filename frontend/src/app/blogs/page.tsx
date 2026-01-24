@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getBlogs } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 interface Blog {
   id: number;
@@ -12,7 +13,7 @@ interface Blog {
   author: string;
 }
 
-export default function BlogsPage() {
+function BlogsContent() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const { isLoggedIn } = useAuth();
@@ -60,17 +61,17 @@ export default function BlogsPage() {
           <p className="text-gray-500">Be the first to write a blog!</p>
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-col gap-6">
           {blogs.map((blog) => (
             <Link
               key={blog.id}
               href={`/blogs/${blog.id}`}
-              className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition p-6 block"
+              className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition p-6 block w-full"
             >
-              <h2 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2">
+              <h2 className="text-2xl font-bold text-gray-800 mb-3">
                 {blog.title}
               </h2>
-              <p className="text-gray-600 line-clamp-3 mb-4">
+              <p className="text-gray-600 mb-4 line-clamp-4">
                 {blog.content}
               </p>
               <div className="flex items-center text-sm text-gray-500">
@@ -83,5 +84,13 @@ export default function BlogsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function BlogsPage() {
+  return (
+    <ProtectedRoute>
+      <BlogsContent />
+    </ProtectedRoute>
   );
 }
